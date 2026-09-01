@@ -1,5 +1,7 @@
 package com.ragnarok.rpg_api.Entity;
 
+import java.time.LocalDate;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -10,8 +12,14 @@ public class Player {
     @Column(name="id_player")
     private Integer idPlayer;
     
-    @Column(nullable = false)
+    @Column(name ="name", nullable = false)
     private String name;
+
+    @Column(name="email", nullable = false)
+    private String email;
+
+    @Column(name="register_date", insertable = false, updatable = false)
+    private LocalDate registerDate;
 
     public Player() {
     }
@@ -30,5 +38,21 @@ public class Player {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public LocalDate getRegisterDate() {
+        return registerDate;
+    }
+
+    public void setRegisterDate(LocalDate registerDate) {
+        this.registerDate = registerDate;
     }
 }
