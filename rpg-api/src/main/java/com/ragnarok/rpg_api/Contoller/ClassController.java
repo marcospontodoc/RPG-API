@@ -7,6 +7,7 @@ import com.ragnarok.rpg_api.Service.ClassService;
 import com.ragnarok.rpg_api.Entity.Class;
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -21,12 +22,16 @@ public class ClassController {
     }
 
     @GetMapping
-    public List<Class> findAll() {
-        return classService.findAllClasses();
+    public ResponseEntity<List<Class>> findAll() {
+        return ResponseEntity.ok(classService.findAllClasses());
     }
 
     @GetMapping("/{id}")
-    public Class findClassById(@PathVariable Integer id) {
-        return classService.findClassById(id);
+    public ResponseEntity<Class> findClassById(@PathVariable Integer id) {
+        Class classEntity = classService.findClassById(id);
+        if (classEntity == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(classEntity);
     }
 }

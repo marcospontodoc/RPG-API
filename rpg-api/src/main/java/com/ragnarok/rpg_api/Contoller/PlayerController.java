@@ -1,22 +1,18 @@
 package com.ragnarok.rpg_api.Contoller;
 
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-
 import com.ragnarok.rpg_api.Entity.Player;
 import com.ragnarok.rpg_api.Service.PlayerService;
-import java.util.List;
-import org.springframework.web.bind.annotation.PutMapping;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/players")
 public class PlayerController {
+
     private final PlayerService playerService;
 
     public PlayerController(PlayerService playerService) {
@@ -24,27 +20,57 @@ public class PlayerController {
     }
 
     @GetMapping
-    public List<Player> findAll() {
-        return playerService.findAllPlayers();
+    public ResponseEntity<List<Player>> findAll() {
+        return ResponseEntity.ok(playerService.findAllPlayers());
     }
 
     @GetMapping("/{id}")
-    public Player findById(@PathVariable Integer id) {
-        return playerService.findPlayerById(id);
+    public ResponseEntity<Player> findById(@PathVariable Integer id) {
+
+        Player player = playerService.findPlayerById(id);
+
+        if (player == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(player);
     }
 
     @PostMapping
-    public Player create(@RequestBody Player player) {
-        return playerService.savePlayer(player);
+    public ResponseEntity<Player> create(@RequestBody Player player) {
+
+        Player savedPlayer = playerService.savePlayer(player);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(savedPlayer);
     }
 
     @PutMapping("/{id}")
-    public Player update(@PathVariable Integer id, @RequestBody Player player){
-        return playerService.updatePlayer(id, player);
+    public ResponseEntity<Player> update(
+            @PathVariable Integer id,
+            @RequestBody Player player) {
+
+        Player updatedPlayer = playerService.updatePlayer(id, player);
+
+        if (updatedPlayer == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(updatedPlayer);
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Integer id) {
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+
+        Player player = playerService.findPlayerById(id);
+
+        if (player == null) {
+            return ResponseEntity.notFound().build();
+        }
+
         playerService.deletePlayer(id);
+
+        return ResponseEntity.noContent().build();
     }
 }

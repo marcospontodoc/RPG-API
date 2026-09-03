@@ -2,12 +2,14 @@ package com.ragnarok.rpg_api.Contoller;
 
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.http.HttpStatus;
 
 import com.ragnarok.rpg_api.Entity.Character;
 import com.ragnarok.rpg_api.Service.CharacterService;
@@ -28,28 +30,44 @@ public class CharacterController {
     }
 
     @GetMapping
-    public List<Character> findAll() {
-        return characterService.findAllCharacters();
+    public ResponseEntity<List<Character>> findAll() {
+        return ResponseEntity.ok(characterService.findAllCharacters());
     }
 
     @GetMapping("/{id}")
-    public Character findById(@PathVariable Integer id) {
-        return characterService.findCharacterById(id);
+    public ResponseEntity<Character> findById(@PathVariable Integer id) {
+        Character character = characterService.findCharacterById(id);
+        if (character == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(character);
     }
 
     @PostMapping
-    public Character create(@RequestBody Character character) {
-        return characterService.saveCharacter(character);
+    public ResponseEntity<Character> create(@RequestBody Character character) {
+        Character savedCharacter = characterService.saveCharacter(character);
+        return ResponseEntity
+                .status(201)
+                .body(savedCharacter);
     }
 
     @PutMapping("/{id}")
-    public Character update(@PathVariable Integer id, @RequestBody Character character){
-        return characterService.updateCharacter(id, character);
+    public ResponseEntity<Character> update(@PathVariable Integer id, @RequestBody Character character){
+        Character updatedCharacter = characterService.updateCharacter(id, character);
+        if (updatedCharacter == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(updatedCharacter);
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Integer id) {
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+        Character character = characterService.findCharacterById(id);
+        if (character == null) {
+            return ResponseEntity.notFound().build();
+        }
         characterService.deleteCharacter(id);
+        return ResponseEntity.noContent().build();
     }
     
     
