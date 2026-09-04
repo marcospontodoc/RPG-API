@@ -1,0 +1,442 @@
+openapi: 3.0.3
+
+info:
+  title: RPG API
+  description: API REST para gerenciamento de jogadores e personagens.
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080
+    description: Servidor local
+
+tags:
+  - name: Players
+    description: Operações relacionadas aos jogadores
+  - name: Characters
+    description: Operações relacionadas aos personagens
+  - name: Classes
+    description: Operações relacionadas às classes do RPG
+
+paths:
+  /players:
+
+    get:
+      tags:
+        - Players
+      summary: Listar jogadores
+      description: Retorna todos os jogadores cadastrados.
+      responses:
+        '200':
+          description: Lista de jogadores retornada com sucesso.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Player'
+
+    post:
+      tags:
+        - Players
+      summary: Criar jogador
+      description: Cria um novo jogador.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlayerRequest'
+            example:
+              name: Teste
+              email: teste@email.com
+
+      responses:
+        '201':
+          description: Jogador criado com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Player'
+
+  /players/{id}:
+
+    get:
+      tags:
+        - Players
+      summary: Buscar jogador por ID
+      description: Retorna um jogador específico através do seu ID.
+      parameters:
+        - $ref: '#/components/parameters/PlayerId'
+
+      responses:
+        '200':
+          description: Jogador encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Player'
+
+        '404':
+          description: Jogador não encontrado.
+
+    put:
+      tags:
+        - Players
+      summary: Atualizar jogador
+      description: Atualiza os dados de um jogador existente.
+      parameters:
+        - $ref: '#/components/parameters/PlayerId'
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlayerRequest'
+            example:
+              name: Player Atualizado
+              email: novo@email.com
+
+      responses:
+        '200':
+          description: Jogador atualizado com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Player'
+
+        '404':
+          description: Jogador não encontrado.
+
+    delete:
+      tags:
+        - Players
+      summary: Excluir jogador
+      description: Exclui um jogador através do seu ID.
+      parameters:
+        - $ref: '#/components/parameters/PlayerId'
+
+      responses:
+        '204':
+          description: Jogador excluído com sucesso.
+
+        '404':
+          description: Jogador não encontrado.
+
+
+  /characters:
+
+    get:
+      tags:
+        - Characters
+      summary: Listar personagens
+      description: Retorna todos os personagens cadastrados.
+      responses:
+        '200':
+          description: Lista de personagens retornada com sucesso.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Character'
+
+    post:
+      tags:
+        - Characters
+      summary: Criar personagem
+      description: Cria um novo personagem.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CharacterRequest'
+            example:
+              idPlayer: 1
+              idClass: 2
+              name: LordKnight
+              level: 50
+
+      responses:
+        '201':
+          description: Personagem criado com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Character'
+
+
+  /characters/{id}:
+
+    get:
+      tags:
+        - Characters
+      summary: Buscar personagem por ID
+      description: Retorna um personagem específico através do seu ID.
+      parameters:
+        - $ref: '#/components/parameters/CharacterId'
+
+      responses:
+        '200':
+          description: Personagem encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Character'
+
+        '404':
+          description: Personagem não encontrado.
+
+    put:
+      tags:
+        - Characters
+      summary: Atualizar personagem
+      description: Atualiza os dados de um personagem existente.
+      parameters:
+        - $ref: '#/components/parameters/CharacterId'
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CharacterRequest'
+            example:
+              idPlayer: 1
+              idClass: 3
+              name: LordKnightUpdated
+              level: 75
+
+      responses:
+        '200':
+          description: Personagem atualizado com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Character'
+
+        '404':
+          description: Personagem não encontrado.
+
+    delete:
+      tags:
+        - Characters
+      summary: Excluir personagem
+      description: Exclui um personagem através do seu ID.
+      parameters:
+        - $ref: '#/components/parameters/CharacterId'
+
+      responses:
+        '204':
+          description: Personagem excluído com sucesso.
+
+        '404':
+          description: Personagem não encontrado.
+
+
+  /classes:
+
+    get:
+      tags:
+        - Classes
+      summary: Listar classes
+      description: Retorna todas as classes disponíveis no RPG.
+      responses:
+        '200':
+          description: Lista de classes retornada com sucesso.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Class'
+
+
+  /classes/{id}:
+
+    get:
+      tags:
+        - Classes
+      summary: Buscar classe por ID
+      description: Retorna uma classe específica através do seu ID.
+      parameters:
+        - $ref: '#/components/parameters/ClassId'
+
+      responses:
+        '200':
+          description: Classe encontrada.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Class'
+
+        '404':
+          description: Classe não encontrada.
+
+
+
+components:
+
+
+  parameters:
+
+    PlayerId:
+      name: id
+      in: path
+      required: true
+      description: ID do jogador
+      schema:
+        type: integer
+        example: 1
+
+    CharacterId:
+      name: id
+      in: path
+      required: true
+      description: ID do personagem
+      schema:
+        type: integer
+        example: 1
+
+    ClassId:
+      name: id
+      in: path
+      required: true
+      description: ID da classe
+      schema:
+        type: integer
+        example: 1
+
+
+
+  schemas:
+
+    Player:
+      type: object
+      description: Representa um jogador cadastrado no sistema.
+      properties:
+        idPlayer:
+          type: integer
+          description: Identificador único do jogador.
+          example: 1
+
+        name:
+          type: string
+          description: Nome do jogador.
+          example: Ariel
+
+        email:
+          type: string
+          format: email
+          description: E-mail do jogador.
+          example: ariel@email.com
+
+        registerDate:
+          type: string
+          format: date
+          description: Data de cadastro do jogador.
+          example: 2026-09-04
+
+
+    PlayerRequest:
+      type: object
+      description: Dados necessários para criar ou atualizar um jogador.
+      required:
+        - name
+        - email
+      properties:
+
+        name:
+          type: string
+          description: Nome do jogador.
+          example: Ariel
+
+        email:
+          type: string
+          format: email
+          description: E-mail do jogador.
+          example: ariel@email.com
+
+
+    Character:
+      type: object
+      description: Representa um personagem do RPG.
+      properties:
+
+        idCharacter:
+          type: integer
+          description: Identificador único do personagem.
+          example: 1
+
+        idPlayer:
+          type: integer
+          description: ID do jogador proprietário do personagem.
+          example: 1
+
+        idClass:
+          type: integer
+          description: ID da classe escolhida pelo personagem.
+          example: 2
+
+        name:
+          type: string
+          description: Nome do personagem.
+          example: LordKnight
+
+        level:
+          type: integer
+          description: Nível atual do personagem.
+          example: 50
+
+
+    CharacterRequest:
+      type: object
+      description: Dados necessários para criar ou atualizar um personagem.
+      required:
+        - idPlayer
+        - idClass
+        - name
+        - level
+      properties:
+
+        idPlayer:
+          type: integer
+          description: ID do jogador proprietário do personagem.
+          example: 1
+
+        idClass:
+          type: integer
+          description: ID da classe do personagem.
+          example: 2
+
+        name:
+          type: string
+          description: Nome do personagem.
+          example: LordKnight
+
+        level:
+          type: integer
+          description: Nível do personagem.
+          example: 50
+
+
+    Class:
+      type: object
+      description: Representa uma classe disponível no RPG.
+      properties:
+
+        idClass:
+          type: integer
+          description: Identificador único da classe.
+          example: 1
+
+        name:
+          type: string
+          description: Nome da classe.
+          example: Knight
+
+        description:
+          type: string
+          description: Descrição da classe.
+          example: Classe especializada em combate corpo a corpo.
